@@ -54,24 +54,31 @@ fn add_to_log(log_path: &Path, entry: &LogEntry) {
         .create(true)
         .open(log_path) {
             Ok(mut log_file) => {
-                if let Ok(json) = serde_json::to_string(entry) {
+                if let Ok(json) = serde_json::to_string_pretty(entry) {
                     if let Err(e) = writeln!(log_file, "{}", json) {
                         eprintln!("Error writing to log file: {:?}", e)
                     }
                 } else {
                     eprintln!("Failed to serialise log entry.")
                 }
-            }
+            },
             Err(e) => {
                 eprintln!("Failed to open log file: {:?}", e)
             }
         }
 }
 
-fn hash_file(path: &PathBuf) -> String{
-    let bytes: Vec<u8> = fs::read(path).unwrap(); //Vec<u8>
-    let hash = Sha384::digest(&bytes);
-    hex::encode(hash)
+fn hash_file(path: &PathBuf) -> Option<String>{
+    match fs::read(path) {
+        Ok(bytes) => {
+            let hash = Sha384::digest(&bytes);
+            Some(hex::encode(hash))
+        }, 
+        Err(e) => {
+            eprintln!("Failed to read file to hash: {:?} | {:?}", path, e);
+            None
+        }
+    }
 }   
 
 fn get_file_hashes(scan_path: &Path) -> HashMap<PathBuf, String>{
@@ -80,8 +87,9 @@ fn get_file_hashes(scan_path: &Path) -> HashMap<PathBuf, String>{
         for entry in fs::read_dir(scan_path).unwrap(){
             let path: PathBuf = entry.unwrap().path();
             if path.is_file() {
-                let hash: String= hash_file(&path);
-                hash_map.insert(path, hash);
+                if let Some(hash) = hash_file(&path) {
+                    hash_map.insert(path, hash);
+                }
             }
         }
     } else {
