@@ -1,0 +1,5 @@
+{
+    "log_path": "./events.log",
+    "scan_path": "./test_dir",
+    "scan_interval_secs": 1
+}
