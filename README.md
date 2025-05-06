@@ -4,6 +4,7 @@ A rust file integrity monitoring tool that watches a specific directory and logs
 
 ## Features
 - Detects and logs file modifications, deletions and additions
+- Logs file size and permissions along with this
 - Simple config file to edit a few options
 
 ## Configuration file
