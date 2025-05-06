@@ -3,7 +3,7 @@
 A rust file integrity monitoring tool that watches a specific directory and logs to a file.
 
 ## Features
-- Detects and logs file modifications, deletions and additions
+- Detects and logs file modifications, deletions and additions in JSON format for easy readability
 - Logs file size and permissions along with this
 - Simple config file to edit a few options
 
