@@ -7,11 +7,12 @@ A rust file integrity monitoring tool that watches a specific directory and logs
 - Simple config file to edit a few options
 
 ## Configuration file
-Settings in the tool can be changed using the config.json
+Settings in the tool can be changed using the config.json.
 ```json
 {
   "log_path": "./events.log",
   "scan_path": "test_dir",
-  "scan_interval_secs": 1
+  "scan_interval_secs": 1,
+  "ignored_extensions": []
 }
 ```
