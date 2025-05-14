@@ -7,7 +7,6 @@ use std::{thread, time};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use serde::Serialize;
-use chrono;
 
 #[derive(serde::Deserialize)]
 struct Config {
@@ -41,7 +40,7 @@ struct FileInfo {
     is_read_only: bool,
 }
 
-fn load_config(path: &Path) -> Option<Config>{ // Either returns config or None
+fn load_config(path: &Path) -> Option<Config>{
     match File::open(path) {
         Ok(mut file) => {
             let mut contents: String = String::new();
@@ -107,7 +106,6 @@ fn human_readable_size(bytes: u64) -> String {
         unit_idx += 1;
     }
     format!("{:.1} {}", size, UNITS[unit_idx])
-
 }
 
 fn get_file_hashes(scan_path: &Path, ignored_ext: &HashSet<String>) -> HashMap<PathBuf, FileInfo>{
@@ -158,11 +156,11 @@ fn get_file_hashes(scan_path: &Path, ignored_ext: &HashSet<String>) -> HashMap<P
                 }
             }
             hash_map.insert(path, FileInfo {
-                hash: hash,
+                hash,
                 size: file_size, 
-                is_archive: is_archive, 
-                is_hidden: is_hidden, 
-                is_read_only: is_read_only 
+                is_archive, 
+                is_hidden, 
+                is_read_only 
             });
         }
     }
@@ -197,7 +195,7 @@ fn main() {
                 Some(old_info) => {
                     if old_info.hash != new_info.hash {
                         let last_info = last_hash_map.get(path);
-                        if last_info.map_or(true, |last| last.hash != new_info.hash) {
+                        if last_info.is_none_or(|last| last.hash != new_info.hash) {
                             let log_entry = LogEntry {
                                 timestamp: chrono::offset::Utc::now().to_rfc3339(),
                                 event: "modified".to_string(),
